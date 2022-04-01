@@ -1,5 +1,5 @@
 var config = {
-    type: Phaser.WEBGL,
+    type: Phaser.AUTO,
     width: 675,
     height: 353,
     physics: {
@@ -22,7 +22,6 @@ var statesA = ['aliveA','fall1A','fall2A', 'dyingA','deadA']
 var valorVidaA = 100;
 var valorVidaB = 100;
 var vidaA, vidaB;
-var particles;
 
 function preload () {
     this.load.spritesheet('lutadorA', 'karatea.png', { frameWidth: 75, frameHeight: 75 });
@@ -32,7 +31,6 @@ function preload () {
 }
 
 function create () {
-    
     cursors = this.input.keyboard.createCursorKeys();
 
     this.add.image(0, 0, 'fundo').setOrigin(0, 0);
@@ -113,7 +111,15 @@ function create () {
      this.anims.create({ key: 'kick',
         frames: this.anims.generateFrameNumbers('lutadorB', { start: 4, end: 10 }),
         frameRate: 20});
+     
+     this.anims.create({key: "voadora",
+        frames: this.anims.generateFrameNumbers("lutadorB", {start: 12, end: 16}),
+        frameRate: 15}); 
     
+     this.anims.create({key: "fallLB",
+        frames: this.anims.generateFrameNumbers("lutadorB", {start: 20, end: 28}),
+        frameRate: 15}) 
+
     lutB.anims.play('idle', true);
     
     this.physics.add.collider(lutA, plataformas);
@@ -122,14 +128,22 @@ function create () {
     var collider = this.physics.add.collider(lutA, lutB, function (lutA, lutB) {
         if (lutB.anims.currentAnim.key == 'kick') {     
            lutA.anims.play('fall1A', true);
-            
+        }else if(lutB.anims.currentAnim.key == "voadora"){
+            lutA.anims.play("fall1A", true);
+        }else if(lutA.anims.currentAnim.key == "kickA"){
+            lutB.anims.play("fallLB", true);
+        }else if(lutA.anims.currentAnim.key == "punchA"){
+            lutB.anims.play("fallLB", true);
+        }else if(lutA.anims.currentAnim.key == "lowpunchA"){
+            lutB.anims.play("fallLB", true);
         }
+        
         lutB.x-=5;
         }, null, this);
 }
 
 function update (){
-    if (lutA.anims.getProgress()==1 && lutA.anims.currentAnim.key != 'deadA') {
+    if (lutA.anims.accumulator >200 && lutA.anims.currentAnim.key != 'deadA') {
         let n = Math.floor(Math.random() * 100);
         if (n<90) {
             lutA.anims.play('idleA', true);
@@ -138,9 +152,9 @@ function update (){
             lutA.anims.play(actionsA[n],true);
         }
     }
-      
+
     if (lutB.anims.currentAnim.key != 'idle') {
-        if (lutB.anims.getProgress()==1) {
+        if (lutB.anims.accumulator >200) {
             lutB.anims.play('idle', true);
         }
     }
@@ -154,8 +168,11 @@ function update (){
         lutB.setVelocityX(100);
         lutB.anims.play('right', true);
     }
-    else if (cursors.up.isDown)    {
+    else if (cursors.up.isDown) {
         lutB.x+=2;
         lutB.anims.play('kick', true);
+    }else if(cursors.down.isDown){
+        lutB.x+=2;
+        lutB.anims.play('voadora', true);
     }
 }
