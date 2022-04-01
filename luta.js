@@ -119,6 +119,10 @@ function create () {
      this.anims.create({key: "fallLB",
         frames: this.anims.generateFrameNumbers("lutadorB", {start: 20, end: 28}),
         frameRate: 15}) 
+    
+    this.anims.create({key: "jump",
+        frames: this.anims.generateFrameNumbers("lutadorB", {start: 20, end: 28}),
+        frameRate: 15}) 
 
     lutB.anims.play('idle', true);
     
@@ -171,7 +175,7 @@ function update (){
     else if (cursors.up.isDown) {
         lutB.x+=2;
         lutB.anims.play('kick', true);
-    }else if(cursors.down.isDown){
+    }else if(cursors.space.isDown){
         lutB.x+=2;
         lutB.anims.play('voadora', true);
     }
