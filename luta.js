@@ -179,4 +179,4 @@ function update (){
         lutB.x+=2;
         lutB.anims.play('voadora', true);
     }
-}
+} 
